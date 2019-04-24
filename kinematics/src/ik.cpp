@@ -27,11 +27,13 @@ public:
 	motion();
 	KDL::JntArray getIK(geometry_msgs::Pose target_pose);
 	void build_traj(geometry_msgs::Pose target_pose);
-	ros::Publisher joint_pub;
-	Eigen::VectorXd hebi_feedback();
-	Eigen::MatrixXd interpolateJnts(Eigen::VectorXd cpos, Eigen::VectorXd tpos, int num_wayp);
+	//Eigen::MatrixXd interpolateJnts(Eigen::VectorXd cpos, Eigen::VectorXd tpos, int num_wayp);
 	bool send_trajectory();
 	bool hebi_send_command(Eigen::VectorXd pos);
+	Eigen::VectorXd hebi_feedback();
+
+	ros::Publisher joint_pub;
+
 private: 
 	KDL::Chain chain;
 	std::string chain_start = "base_link";
@@ -49,7 +51,7 @@ private:
 	KDL::Tree my_tree;
 	std::string robot_desc_string;
 	std::vector<double> joint_angle_track;
-	std::vector<double> homing;
+	Eigen::VectorXd homing;
 
 	Lookup lookup;
 	std::shared_ptr<Group> group ;
@@ -180,16 +182,16 @@ void motion::build_traj(geometry_msgs::Pose target_pose){
 
 }
 
-Eigen::MatrixXd motion::interpolateJnts(Eigen::VectorXd cpos, Eigen::VectorXd tpos, int num_wayp){ 
+// Eigen::MatrixXd motion::interpolateJnts(Eigen::VectorXd cpos, Eigen::VectorXd tpos, int num_wayp){ 
 
-	for(int i=0; i<cpos.size(); i++ ){
+// 	for(int i=0; i<cpos.size(); i++ ){
 
-		double step_size = (tpos(i) - cpos(i))/2;
-	}
+// 		double step_size = (tpos(i) - cpos(i))/2;
+// 	}
 
 
 
-}
+// }
 
 
 bool motion::hebi_send_command( Eigen::VectorXd pos){
