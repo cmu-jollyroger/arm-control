@@ -23,7 +23,7 @@ def IK(target_frame):
 	ax = plot_utils.init_3d_figure()
 	
 	
-	my_chain =ikpy.chain.Chain.from_urdf_file("../../urdf_tutorial/urdf/01-myfirst.urdf")
+	my_chain =ikpy.chain.Chain.from_urdf_file("urdf/01-myfirst.urdf")
 	print(my_chain)
 	jnts = my_chain.inverse_kinematics(target_frame)
 	my_chain.plot(jnts, ax, target=target_frame[:3,3])
@@ -40,12 +40,12 @@ def talker():
 	# ori_y = 0
 	# ori_z = -n.pi/2
 
-	ori_x = 0
-	ori_y = n.pi
-	ori_z = n.pi/2
+	ori_x = -n.pi/2
+	ori_y = n.pi/2
+	ori_z = 0
 
 
-	target_vector = [0.03453803, 0.20218451, 0.16631325]
+	target_vector = [ 0.03454648,  0.25226157  ,0.21287656]
 	target_frame = n.eye(4)
 	rM = rotM(tf.transformations.quaternion_from_euler(ori_x, ori_y, ori_z))
 	target_frame[0:3,0:3] = rM
@@ -53,20 +53,47 @@ def talker():
 	# target_frame[1,0:3] = [0, 0, -1]
 	# target_frame[2,0:3] = [0, 1, 0]
 	target_frame[:3, 3] = target_vector
-	# print(target_frame)
-	# jnts = IK(target_frame)
-	# print(jnts)
+	print(target_frame)
+	jnts = IK(target_frame)
+	print(jnts)
 
 	rate = rospy.Rate(10) # 10hz
 	hello_str = JointState()
 	hello_str.header = Header()
 	hello_str.name=['dummy_to_base','dummy_to_elbow_1','elbow_1_to_elbow_2','elbow_2_to_elbow_3','elbow_3_to_end_eff']
-	hello_str.position = [0.0129405,
-0.167161,
-2.3739,
--0.9318,
-0.0155165
+	hello_str.position = [
+	# 0.0129405,
+	# 0.167161,
+	# 2.3739,
+	# -0.9318,
+	# 0.0155165
+	 0.00909102,
+ -0.411375,
+   2.74059,
+   7.90925,
+   0.0
+# jnts[1], jnts[2], jnts[3], jnts[4],  0.0
+
 ]
+	my_chain =ikpy.chain.Chain.from_urdf_file("urdf/01-myfirst.urdf")
+	print(my_chain)
+	a = my_chain.forward_kinematics([
+	# 0.0129405,
+	# 0.167161,
+	# 2.3739,
+	# -0.9318,
+	# 0.0155165
+	0.0,
+	0.18571,
+-1.57,
+-2.38422,
+2.3722,
+0.198689
+
+
+]
+		)
+	print(a[:3,3])
 
 #[jnts[1], jnts[2], jnts[3], jnts[4],  0.0]#[ 0.0  ,  0.01260592, -0.56007798,  2.7924331 , -3.64144066,  0.0]# #
 	
@@ -81,7 +108,7 @@ def talker():
 		hello_str.header.stamp = rospy.Time.now()
 		pub.publish(hello_str)
 		br.sendTransform((target_vector[0], target_vector[1], target_vector[2]),
-                         tf.transformations.quaternion_from_euler(ori_x, ori_y, ori_z),
+                         (-0.491329,0.487592,0.513436,0.507182),#tf.transformations.quaternion_from_euler(ori_x, ori_y, ori_z),
                          rospy.Time.now(),
                          "pose",
                          "base_link")
